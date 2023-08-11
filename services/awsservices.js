@@ -6,6 +6,24 @@ const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const sharp = require("sharp");
+const ApiClassError = require("../utils/ApiClassError");
+//generaterandomname
+function generateDifficultname(length = 12) {
+  const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+  const numberChars = "0123456789";
+
+  const allChars = uppercaseChars + lowercaseChars + numberChars;
+
+  let password = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * allChars.length);
+    password += allChars[randomIndex];
+  }
+
+  return password;
+}
 
 const s3Client = new S3Client({
   region,
@@ -17,7 +35,18 @@ const s3Client = new S3Client({
 
 const uploadProfileimage = async (req, res, next) => {
   const file = req.file;
-  const imageName = "yahia-photo";
+  const typeHeader = req.header("Type"); // Get the type from the header
+
+  if (!typeHeader) {
+    return res.status(400).json({ error: "Missing X-Upload-Type header" });
+  }
+
+  const imageName =
+    typeHeader === "ProfilePictures"
+      ? `ProfilePictures/${req.user.username}/${generateDifficultname()}`
+      : `${req.user.company}/${
+          req.user.username
+        }/${typeHeader}/${generateDifficultPassword()}`;
   const fileBuffer = file.buffer;
   const uploadParams = {
     Bucket: bucketName,
@@ -28,13 +57,13 @@ const uploadProfileimage = async (req, res, next) => {
 
   try {
     const response = await s3Client.send(new PutObjectCommand(uploadParams));
-
-    req.user.profileIMG = `https://${bucketName}.s3.eu-west-1.amazonaws.com/${imageName}`;
+    if (typeHeader === "ProfilePictures") {
+      req.user.profileIMG = imageName;
+    }
     await req.user.save();
-    res.json({});
+    res.json(response);
   } catch (error) {
-    console.error("Error uploading file to S3:", error);
-    res.status(500).json({ error: "Failed to upload file to S3" });
+    return next(new ApiClassError(`Failed to upload file to S3`, 500));
   }
 };
 

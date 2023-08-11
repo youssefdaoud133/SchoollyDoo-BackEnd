@@ -21,7 +21,11 @@ const UserSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    profileIMG: String,
+    profileIMG: {
+      type: String,
+      default:
+        "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png",
+    },
     password: {
       type: String,
       required: [true, "password required"],

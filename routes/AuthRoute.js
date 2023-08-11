@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Auth = require("../services/AuthClass");
 const AuthUsers = new Auth();
+const { getuploadedprofilepicture } = require("../services/getawsservices");
 
 const {
   SignUpvalidateData,
@@ -14,6 +15,10 @@ router
 router.route("/login").post(LoginvalidateData, AuthUsers.Login.bind(AuthUsers));
 router
   .route("/myprofile")
-  .get(AuthUsers.protect.bind(AuthUsers), AuthUsers.myprofile.bind(AuthUsers));
+  .get(
+    AuthUsers.protect.bind(AuthUsers),
+    getuploadedprofilepicture,
+    AuthUsers.myprofile.bind(AuthUsers)
+  );
 
 module.exports = router;

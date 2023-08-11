@@ -5,20 +5,6 @@ const { json } = require("express");
 const ApiClassError = require("../utils/ApiClassError");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-//aws
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const bucketName = process.env.AWS_BUCKET_NAME;
-const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
-const s3Client = new S3Client({
-  region, // Replace with your desired AWS region
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
-});
 
 // generate token
 const GenerateToken = (userId) => {
@@ -37,18 +23,6 @@ class AuthHelper {
     res.status(201).json({ newData, token });
   });
   myprofile = asyncHandler(async (req, res, next) => {
-    // Parse the URL to extract the bucket name and object key
-    const urlParts = req.user.profileIMG.split("/");
-    const objectKey = urlParts.pop();
-
-    const params = {
-      Bucket: bucketName,
-      Key: objectKey,
-    };
-    const command = new GetObjectCommand(params);
-    const url = await getSignedUrl(s3Client, command, {});
-    req.user.profileIMG = url;
-
     res.status(201).json({ user: req.user });
   });
 
