@@ -22,21 +22,40 @@ exports.getuploadedprofilepicture = async (req, res, next) => {
     // Parse the URL to extract the bucket name and object key
     let urlParts;
 
-    // if (req.header("Type") === "ProfilePictures") {
-    urlParts = req.user.profileIMG;
+    // urlParts = req.user.profileIMG;
 
-    const objectKey = urlParts;
+    // const objectKey = urlParts;
 
+    // const params = {
+    //   Bucket: bucketName,
+    //   Key: objectKey,
+    // };
+    // const command = new GetObjectCommand(params);
+    // const url = await getSignedUrl(s3Client, command, {});
+    // req.user.profileIMG = url;
+    next();
+  } catch (e) {
+    return next(new ApiClassError(`Failed to load file`, 500));
+  }
+};
+exports.getuploadedprofilepicturefromapply = async (objectKey) => {
+  try {
+    if (
+      objectKey ===
+      "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png"
+    ) {
+      const url = objectKey;
+      return url;
+    }
     const params = {
       Bucket: bucketName,
       Key: objectKey,
     };
     const command = new GetObjectCommand(params);
     const url = await getSignedUrl(s3Client, command, {});
-    req.user.profileIMG = url;
-    next();
+    return url;
   } catch (e) {
-    return next(new ApiClassError(`Failed to load file`, 500));
+    return new ApiClassError(`Failed to load file`, 500);
   }
 };
 

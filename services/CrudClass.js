@@ -6,6 +6,10 @@ const ApiClassError = require("../utils/ApiClassError");
 const ApplyModel = require("../models/ApplyModel");
 const Apply = require("../models/ApplyModel");
 
+const {
+  getuploadedprofilepicturefromapply,
+} = require("../services/getawsservices");
+
 class CrudHelper {
   constructor(model) {
     this.model = require(`../models/${model}`);
@@ -63,12 +67,19 @@ class CrudHelper {
         .find({ active: false })
         .populate("owner")
         .populate("school");
+      for (let i = 0; i < data.length; i++) {
+        data[i].owner.profileIMG = await getuploadedprofilepicturefromapply(
+          data[i].owner.profileIMG
+        );
+      }
+
       res.status(200).json({ result: data.length, data });
     } else {
       const data = { msg: "you should be manager" };
       res.status(401).json({ result: 0, data });
     }
   });
+
   readAllHandlermySchool = asyncHandler(async (req, res) => {
     if (req.user.role === "leader") {
       const data = await this.model
@@ -164,9 +175,16 @@ class CrudHelper {
     todata = await this.model
       .find({ to: req.body.owner, read: false })
       .populate("to")
+      .populate("owner")
       .sort({ timestamp: -1 });
 
     let data = [...roledata, ...todata];
+
+    for (let i = 0; i < data.length; i++) {
+      data[i].owner.profileIMG = await getuploadedprofilepicturefromapply(
+        data[i].owner.profileIMG
+      );
+    }
     res.status(200).json({ result: data.length, data });
   });
   makeReadAllNotifications = asyncHandler(async (req, res) => {

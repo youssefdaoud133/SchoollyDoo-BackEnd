@@ -7,6 +7,10 @@ const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const sharp = require("sharp");
 const ApiClassError = require("../utils/ApiClassError");
+
+// test
+const { getuploadedprofilepicturefromapply } = require("./getawsservices");
+
 //generaterandomname
 function generateDifficultname(length = 12) {
   const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -58,8 +62,10 @@ const uploadProfileimage = async (req, res, next) => {
   try {
     const response = await s3Client.send(new PutObjectCommand(uploadParams));
     if (typeHeader === "ProfilePictures") {
-      req.user.profileIMG = imageName;
+      const realurl = await getuploadedprofilepicturefromapply(imageName);
+      req.user.profileIMG = realurl;
     }
+
     await req.user.save();
     res.json(response);
   } catch (error) {
