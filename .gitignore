@@ -1,3 +1,6 @@
 node_modules/
 config.env
-./venv/Lib
+# Ignore Python virtual environment packages
+lib/
+lib64/
+site-packages/
