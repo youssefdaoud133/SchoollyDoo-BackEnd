@@ -3,11 +3,7 @@
 
 import sys
 
-# Specify the path to your Pillow installation
-pillow_path = '/opt/render/.local/lib/python3.7/site-packages'
 
-# Add the Pillow path to the Python path
-sys.path.insert(0, pillow_path)
 
 from PIL import Image, ImageDraw, ImageFont
 # import pyglet
