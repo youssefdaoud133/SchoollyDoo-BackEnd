@@ -13,6 +13,7 @@ router
   .route("/signup")
   .post(SignUpvalidateData, AuthUsers.SignUp.bind(AuthUsers));
 router.route("/login").post(LoginvalidateData, AuthUsers.Login.bind(AuthUsers));
+router.route("/addstudents").post(AuthUsers.addstudents.bind(AuthUsers));
 router
   .route("/myprofile")
   .get(

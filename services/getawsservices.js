@@ -8,6 +8,8 @@ const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+// const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const s3Client = new S3Client({
   region, // Replace with your desired AWS region
@@ -47,12 +49,16 @@ exports.getuploadedprofilepicturefromapply = async (objectKey) => {
       const url = objectKey;
       return url;
     }
+    const expirationDate = new Date();
+    expirationDate.setFullYear(expirationDate.getFullYear() + 10); // Set expiration to 10 years in the future
     const params = {
       Bucket: bucketName,
       Key: objectKey,
     };
     const command = new GetObjectCommand(params);
-    const url = await getSignedUrl(s3Client, command, {});
+    const url = await getSignedUrl(s3Client, command, {
+      expires: expirationDate,
+    });
     return url;
   } catch (e) {
     return new ApiClassError(`Failed to load file`, 500);

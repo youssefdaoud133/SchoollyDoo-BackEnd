@@ -21,6 +21,7 @@ router
   .route("/")
   .post(CreatevalidateData, CrudForUsers.createHandler.bind(CrudForUsers))
   .get(CrudForUsers.readAllHandler.bind(CrudForUsers));
+
 router
   .route("/uploadprofilepicture")
   .post(

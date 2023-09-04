@@ -4,6 +4,7 @@ const FindHelpInError = require("../utils/SomeUsefulFunction.js/HelpInError");
 const { json } = require("express");
 const ApiClassError = require("../utils/ApiClassError");
 const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcryptjs");
 const bcrypt = require("bcryptjs");
 
 // generate token
@@ -22,6 +23,28 @@ class AuthHelper {
     const token = GenerateToken(newData._id);
     res.status(201).json({ newData, token });
   });
+  addstudents = asyncHandler(async (req, res, next) => {
+    try {
+      // Hash passwords in parallel using Promise.all
+      const hashedUsers = await Promise.all(
+        req.body.map(async (user) => {
+          if (user.password) {
+            user.password = await bcrypt.hash(user.password, 12);
+          }
+          return user;
+        })
+      );
+
+      console.log(hashedUsers);
+
+      // Insert the hashed users
+      const newData = await this.model.insertMany(hashedUsers);
+      res.status(201).json({ message: "Objects inserted successfully" });
+    } catch (error) {
+      next(new ApiClassError(error, 500));
+    }
+  });
+
   myprofile = asyncHandler(async (req, res, next) => {
     res.status(201).json({ user: req.user });
   });
