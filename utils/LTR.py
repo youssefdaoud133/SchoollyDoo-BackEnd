@@ -1,3 +1,6 @@
+#!/usr/bin/env python3.7
+
+
 import sys
 
 # Specify the path to your Pillow installation
