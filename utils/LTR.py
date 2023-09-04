@@ -3,11 +3,9 @@ from PIL import Image, ImageDraw, ImageFont
 import base64
 
 import arabic_reshaper
-from datetime import datetime
 import io
 import sys
 import json
-import pyperclip
 import os  # Import the os module for file path operations
 
 from bidi.algorithm import get_display
@@ -130,7 +128,6 @@ image.save(output_buffer, format="JPEG")
 image_bytes = output_buffer.getvalue()
 
 base64_string = base64.b64encode(image_bytes).decode('utf-8')
-pyperclip.copy(str(base64_string))
 
 print(base64_string)
 
