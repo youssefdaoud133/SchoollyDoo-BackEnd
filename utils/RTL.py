@@ -1,4 +1,13 @@
+import sys
+
+# Add the directory containing Pillow to the Python path
+sys.path.append('/opt/render/.local/lib/python3.7/site-packages')
+
+# Now you can import Pillow
 from PIL import Image, ImageDraw, ImageFont
+
+
+# from PIL import Image, ImageDraw, ImageFont
 # import pyglet
 import base64
 
