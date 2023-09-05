@@ -39,6 +39,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Input image path (relative to script directory)
 image_path = os.path.join(script_dir, "gdwl-step5.jpg")
+fontpth = os.path.join(script_dir, "ARIBL0.ttf")
 # Input image path
 # image_path = "G:/SchoollyDoo/backend/nodejs-schoolly-api-v1/utils/gdwl-step5.jpg"
 
@@ -62,7 +63,7 @@ image = Image.open(image_path)
 draw = ImageDraw.Draw(image)
 
 # Load the Arabic font
-font = ImageFont.truetype(font_path, font_size)
+font = ImageFont.truetype(fontpth, font_size)
 
 # Position to place the text
 text_position = (936.46, 200.95)
