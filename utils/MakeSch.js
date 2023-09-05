@@ -19,6 +19,9 @@ const make = (dataToSend) => {
       dataString,
       dataToSend.schoolname,
       dataToSend.fontsize,
+      dataToSend.ToRight,
+      dataToSend.ToDown,
+      dataToSend.theme,
     ]);
 
     let resultData = ""; // To accumulate the stdout data

@@ -27,6 +27,9 @@ def solve_arabic(arabic_text):
 data_argument = sys.argv[1]
 schoolname = sys.argv[2]
 fontsize = sys.argv[3]
+ToRight = sys.argv[4]
+ToDown = sys.argv[5]
+theme = sys.argv[6]
 
 # Parse the JSON data
 data = json.loads(data_argument)
@@ -40,7 +43,9 @@ data = json.loads(data_argument)
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Input image path (relative to script directory)
-image_path = os.path.join(script_dir, "gdwl-step5.jpg")
+image_path_orange = os.path.join(script_dir, "gdwl-step5.jpg")
+image_path_blue = os.path.join(script_dir, "them_blue.jpg")
+image_path_purple = os.path.join(script_dir, "them_purple.jpg")
 fontpth = os.path.join(script_dir, "trado.ttf")
 # Input image path
 # image_path = "G:/SchoollyDoo/backend/nodejs-schoolly-api-v1/utils/gdwl-step5.jpg"
@@ -52,14 +57,18 @@ arabic_text = schoolname
 
 # Font settings (using a font that supports Arabic)
 font_path = "arial"  # Path to an Arabic TrueType font file
-if int(fontsize) > 0:
-    font_size = int(fontsize)
-else:
-    font_size = 100
+
+font_size = 100  + int(fontsize)
 font_color = (255, 255, 255)  # RGB color tuple (white)
 
-# Load the image
-image = Image.open(image_path)
+image = None  # Initialize the image variable to None
+
+if theme == "orange":
+    image = Image.open(image_path_orange)
+elif theme == "blue":
+    image = Image.open(image_path_blue)
+elif theme == "purple":
+    image = Image.open(image_path_purple)
 
 # Create a drawing context
 draw = ImageDraw.Draw(image)
@@ -68,14 +77,14 @@ draw = ImageDraw.Draw(image)
 font = ImageFont.truetype(fontpth, font_size)
 
 # Position to place the text
-text_position = (936.46, 180.95)
+text_position = (936.46, 155.95)
 
 
 
 
 # Starting position (x and y coordinates)
-start_x = 3030.44
-start_y = 800.65
+start_x = 3030.44  + int(ToRight)
+start_y = 800.65 + int(ToDown)
 
 # Cell size (width and height)
 cell_width = 310  # Adjust as needed
@@ -95,8 +104,8 @@ for row in data:
 
 # mainrow    
 # Starting position (x and y coordinates)
-mstart_x = 3040.44
-mstart_y = 610.65
+mstart_x = 3040.44 + int(ToRight)
+mstart_y = 610.65 + int(ToDown)
 
 # Cell size (width and height)
 mcell_width = 310  # Adjust as needed
@@ -120,10 +129,11 @@ for row in data:
 
 
 
-
+# Load the Arabic font
+font = ImageFont.truetype(fontpth, 135)
 
 # Add Arabic text to the image
-draw.text(text_position,solve_arabic(arabic_text)[::-1], font=font, fill=font_color)
+draw.text(text_position,solve_arabic(arabic_text), font=font, fill=font_color)
 
 # # Save the modified image
 # image.save("G:/SchoollyDoo/backend/nodejs-schoolly-api-v1/utils/dist/output.jpg")
