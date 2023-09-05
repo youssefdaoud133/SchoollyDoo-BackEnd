@@ -39,7 +39,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 
 # Input image path (relative to script directory)
 image_path = os.path.join(script_dir, "gdwl-step5.jpg")
-fontpth = os.path.join(script_dir, "ARIBL0.ttf")
+fontpth = os.path.join(script_dir, "Raleway-Light.ttf")
 # Input image path
 # image_path = "G:/SchoollyDoo/backend/nodejs-schoolly-api-v1/utils/gdwl-step5.jpg"
 
