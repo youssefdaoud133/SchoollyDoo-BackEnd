@@ -88,7 +88,7 @@ for row in data:
 
     for key, value in row.items():
         text = f"{value}"
-        draw.text((x, y), solve_arabic(text), font=font, fill=font_color)
+        draw.text((x, y), solve_arabic(text)[::-1], font=font, fill=font_color)
         x -= cell_width  # Move to the next column
 
     start_y += cell_height  # Move to the next row
@@ -109,7 +109,7 @@ for row in data:
 
     for key, value in row.items():
         text = f"{key}"
-        draw.text((x, y), solve_arabic(text), font=font, fill=font_color)
+        draw.text((x, y), solve_arabic(text)[::-1], font=font, fill=font_color)
         x -= mcell_width  # Move to the next column
 
     start_y += mcell_height  # Move to the next row
@@ -123,7 +123,7 @@ for row in data:
 
 
 # Add Arabic text to the image
-draw.text(text_position,solve_arabic(arabic_text), font=font, fill=font_color)
+draw.text(text_position,solve_arabic(arabic_text)[::-1], font=font, fill=font_color)
 
 # # Save the modified image
 # image.save("G:/SchoollyDoo/backend/nodejs-schoolly-api-v1/utils/dist/output.jpg")
