@@ -47,6 +47,14 @@ class CrudHelper {
     const data = await this.model.find();
     res.status(200).json({ result: data.length, data });
   });
+  readAllPostsRelatedToSchool = asyncHandler(async (req, res) => {
+    // req.body.slug = slugify(req.body.username);
+    const data = await this.model
+      .find({ school: req.user.company })
+      .populate("owner")
+      .sort({ timestamp: -1 });
+    res.status(200).json({ result: data.length, data });
+  });
   readAllHandlerAndPopulate = asyncHandler(async (req, res) => {
     // req.body.slug = slugify(req.body.username);
     const data = await this.model.find().populate("owner");
@@ -86,6 +94,11 @@ class CrudHelper {
         .find({ owner: req.body.owner })
         .populate("owner");
       res.status(200).json({ result: data.length, data });
+    } else if (req.user.role === "teacher") {
+      const data = await this.model
+        .find({ company: req.body.company })
+        .populate("owner");
+      res.status(200).json({ result: data.length, data });
     } else {
       const data = { msg: "you should be leader" };
       res.status(401).json({ result: 0, data });
@@ -105,6 +118,74 @@ class CrudHelper {
     } else {
       next(new ApiClassError(`invalid id`, 500));
     }
+  });
+
+  AddLike = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      // Find the post by ID
+      const post = await this.model.findById(id);
+
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Add a like object to the "likes" array
+      post.likes.push({ id: req.user._id }); // Assuming you have authentication and access to req.user
+
+      // Save the updated post
+      await post.save();
+
+      return res.status(200).json({ message: "Liked the post" });
+    } catch (error) {
+      console.error(error);
+      next(new ApiClassError(`Failed to add like`, 500)); // Handle the error
+    }
+  });
+
+  RemoveLike = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      // Find the post by ID
+      const post = await this.model.findById(id);
+
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Find the like object with the given ID in the "likes" array
+      const like = post.likes.find(
+        (like) => like.id.toString() === req.user._id.toString()
+      );
+
+      if (!like) {
+        return res.status(404).json({ message: "Like not found" });
+      }
+
+      // Remove the like object from the "likes" array
+      post.likes.pull(like._id);
+
+      // Save the updated post
+      await post.save();
+
+      return res.status(200).json({ message: "Like removed" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  };
+
+  readAllLikesRelatedToPostAndPopulate = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const data = await this.model
+      .findById(id)
+      .sort({ timestamp: -1 })
+      .populate("likes.id")
+      .exec();
+
+    res.status(200).json({ data });
   });
 
   readOneSchool = asyncHandler(async (req, res, next) => {

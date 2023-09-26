@@ -18,25 +18,20 @@ const s3Client = new S3Client({
     secretAccessKey,
   },
 });
+const isS3UrlExpired = require("../utils/SomeUsefulFunction.js/checkS3UrlExpiration");
 
 exports.getuploadedprofilepicture = async (req, res, next) => {
   try {
-    // Parse the URL to extract the bucket name and object key
-    let urlParts;
-
-    // urlParts = req.user.profileIMG;
-
-    // const objectKey = urlParts;
-
-    // const params = {
-    //   Bucket: bucketName,
-    //   Key: objectKey,
-    // };
-    // const command = new GetObjectCommand(params);
-    // const url = await getSignedUrl(s3Client, command, {});
-    // req.user.profileIMG = url;
+    if (isS3UrlExpired(req.user.profileIMG)) {
+      const realurl = await exports.getuploadedprofilepicturefromapply(
+        req.user.orprofileIMG
+      );
+      req.user.profileIMG = realurl;
+      await req.user.save();
+    }
     next();
   } catch (e) {
+    console.log(e);
     return next(new ApiClassError(`Failed to load file`, 500));
   }
 };
@@ -57,10 +52,29 @@ exports.getuploadedprofilepicturefromapply = async (objectKey) => {
     };
     const command = new GetObjectCommand(params);
     const url = await getSignedUrl(s3Client, command, {
-      expires: expirationDate,
+      expiresIn: 604800, // 10 years in seconds (60 seconds * 60 minutes * 24 hours * 365 days * 10 years)
     });
     return url;
   } catch (e) {
+    console.log(e);
+    return new ApiClassError(`Failed to load file`, 500);
+  }
+};
+
+exports.getpostphotosandvideos = async (req, res, next) => {
+  3;
+  try {
+    const params = {
+      Bucket: bucketName,
+      Key: req.body.path,
+    };
+    const command = new GetObjectCommand(params);
+    const url = await getSignedUrl(s3Client, command, {
+      expiresIn: 604800, // 10 years in seconds (60 seconds * 60 minutes * 24 hours * 365 days * 10 years)
+    });
+    res.status(200).json({ url });
+  } catch (e) {
+    console.log(e);
     return new ApiClassError(`Failed to load file`, 500);
   }
 };

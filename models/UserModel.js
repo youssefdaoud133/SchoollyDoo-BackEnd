@@ -21,6 +21,11 @@ const UserSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    orprofileIMG: {
+      type: String,
+      default:
+        "https://www.tenforums.com/geek/gars/images/2/types/thumb_15951118880user.png",
+    },
     profileIMG: {
       type: String,
       default:

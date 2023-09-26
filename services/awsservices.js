@@ -1,11 +1,12 @@
+// import libraries
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const dotenv = require("dotenv");
 dotenv.config();
+// get access
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_REGION;
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const sharp = require("sharp");
 const ApiClassError = require("../utils/ApiClassError");
 
 // test
@@ -37,7 +38,7 @@ const s3Client = new S3Client({
   },
 });
 
-const uploadProfileimage = async (req, res, next) => {
+exports.uploadProfileimage = async (req, res, next) => {
   const file = req.file;
   const typeHeader = req.header("Type"); // Get the type from the header
 
@@ -62,6 +63,7 @@ const uploadProfileimage = async (req, res, next) => {
   try {
     const response = await s3Client.send(new PutObjectCommand(uploadParams));
     if (typeHeader === "ProfilePictures") {
+      req.user.orprofileIMG = imageName;
       const realurl = await getuploadedprofilepicturefromapply(imageName);
       req.user.profileIMG = realurl;
     }
@@ -72,5 +74,41 @@ const uploadProfileimage = async (req, res, next) => {
     return next(new ApiClassError(`Failed to upload file to S3`, 500));
   }
 };
+exports.uploadPostimages = async (req, res, next) => {
+  const images = req.files;
+  const posttxt = req.body.txt;
+  if (images.length === 0 && posttxt === "") {
+    return next(new ApiClassError(`Write anything or add Media`, 500));
+  }
+  console.log(posttxt);
+  let arrayofphotos = [];
+  try {
+    for (const image of images) {
+      const imageName = `${req.user.company}/${
+        req.user.username
+      }/${"PostsImages"}/${generateDifficultname()}`;
+      arrayofphotos.push(imageName);
 
-module.exports = uploadProfileimage;
+      const fileBuffer = image.buffer;
+      const uploadParams = {
+        Bucket: bucketName,
+        Body: fileBuffer,
+        Key: imageName,
+        ContentType: image.mimetype,
+      };
+      await s3Client.send(new PutObjectCommand(uploadParams));
+    }
+    req.body = {
+      post_text: posttxt,
+      owner: req.user._id,
+      school: req.user.company,
+      photos: arrayofphotos,
+      role: req.user.role,
+    };
+
+    next();
+  } catch (error) {
+    console.log(error);
+    return next(new ApiClassError(`Failed to upload file to S3`, 500));
+  }
+};

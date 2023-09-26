@@ -4,7 +4,7 @@ const Crud = require("../services/CrudClass");
 const Auth = require("../services/AuthClass");
 const CrudForUsers = new Crud("UserModel");
 const AuthUsers = new Auth();
-const uploadProfileimage = require("../services/awsservices");
+const { uploadProfileimage } = require("../services/awsservices");
 
 const multer = require("multer");
 
