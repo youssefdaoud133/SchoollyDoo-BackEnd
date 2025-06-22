@@ -27,16 +27,7 @@ router
     AuthUsers.protect.bind(AuthUsers),
     CrudForApply.readAllHandlerUnactiveApply.bind(CrudForApply)
   );
-// router
-//   .route("/myschool")
-//   .get(
-//     AuthUsers.protect.bind(AuthUsers),
-//     CrudForApply.readAllHandlermySchool.bind(CrudForApply)
-//   );
 
-// router
-//   .route("/:id")
-//   .get(FindvalidateData, CrudForApply.readOneSchool.bind(CrudForApply));
 router
   .route("/unactive/:id")
   .put(CrudForApply.updateHandler.bind(CrudForApply))

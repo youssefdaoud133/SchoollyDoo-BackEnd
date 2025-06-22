@@ -75,11 +75,6 @@ class CrudHelper {
         .find({ active: false })
         .populate("owner")
         .populate("school");
-      // for (let i = 0; i < data.length; i++) {
-      //   data[i].owner.profileIMG = await getuploadedprofilepicturefromapply(
-      //     data[i].owner.profileIMG
-      //   );
-      // }
 
       res.status(200).json({ result: data.length, data });
     } else {
@@ -261,11 +256,6 @@ class CrudHelper {
 
     let data = [...roledata, ...todata];
 
-    // for (let i = 0; i < data.length; i++) {
-    //   data[i].owner.profileIMG = await getuploadedprofilepicturefromapply(
-    //     data[i].owner.profileIMG
-    //   );
-    // }
     res.status(200).json({ result: data.length, data });
   });
   makeReadAllNotifications = asyncHandler(async (req, res) => {

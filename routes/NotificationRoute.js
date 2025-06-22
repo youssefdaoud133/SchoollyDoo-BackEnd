@@ -40,12 +40,4 @@ router
     CrudForNotification.makeReadOneNotifications.bind(CrudForNotification)
   );
 
-// router
-//   .route("/:id")
-//   .get(FindvalidateData, CrudForSchool.readOneSchool.bind(CrudForSchool));
-// router
-//   .route("/unactive/:id")
-//   .put(CrudForSchool.updateHandler.bind(CrudForSchool))
-//   .delete(CrudForSchool.deleteHandler.bind(CrudForSchool));
-
 module.exports = router;
